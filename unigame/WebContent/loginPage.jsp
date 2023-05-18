@@ -18,6 +18,7 @@
 	<meta name="viewport" content="width=devide-width, initial scale=1.0">
 	<title>Accedi</title>
 	<link rel="stylesheet" href="style/style.css">
+	<link rel="icon" href="../images/icon.png">
 
 </head>
 <body>

@@ -1,4 +1,4 @@
-package it.unisa.unigame.model.DAO;
+ package it.unisa.unigame.model.DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

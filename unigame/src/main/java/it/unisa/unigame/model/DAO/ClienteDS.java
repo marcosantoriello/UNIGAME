@@ -182,6 +182,47 @@ public class ClienteDS implements Cliente{
 		}
 		return bean;
 	}
+	
+	@Override
+	public ClienteBean doRetrieveByKeyEmail(String email) throws SQLException {
+		Connection connection = null;
+		PreparedStatement preparedStmt = null;
+		ClienteBean bean = new ClienteBean();
+		
+		String selectSQL = "SELECT * FROM " + ClienteDS.TABLE_NAME
+				+ "WHERE EMAIL =  ?";
+		
+		try {
+			connection = ds.getConnection();
+			preparedStmt = connection.prepareStatement(selectSQL);
+			preparedStmt.setString(1, email);
+			
+			ResultSet rs = preparedStmt.executeQuery();
+			while (rs.next()) {
+				bean.setCodice_fiscale(rs.getString("codice_fiscale"));
+				bean.setNome(rs.getString("nome"));
+				bean.setCognome(rs.getString("cognome"));
+				bean.setUsername(rs.getString("username"));
+				bean.setEmail(rs.getString("email"));
+				bean.setPassword(rs.getString("pass_word"));
+				bean.setInd_fatturazione(rs.getString("indirizzo_fatturazione"));
+				bean.setData_di_nascita(rs.getDate("data_di_nascita").toLocalDate());
+				bean.setSospeso(rs.getBoolean("sospeso"));
+			}
+		}
+		
+		finally {
+			try {
+				if (preparedStmt != null)
+					preparedStmt.close();
+			}
+			finally {
+				if (connection != null)
+					connection.close();
+			}
+		}
+		return bean;
+	}
 
 	@Override
 	public Collection<ClienteBean> doRetrieveAll(String order) throws SQLException {

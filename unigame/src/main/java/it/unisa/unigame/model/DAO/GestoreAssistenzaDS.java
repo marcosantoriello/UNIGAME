@@ -177,6 +177,48 @@ private static final String TABLE_NAME = "gestore_assistenza";
 		
 		return bean;
 	}
+	
+	@Override
+	public GestoreAssistenzaBean doRetrieveByKeyEmail(String email) throws SQLException {
+		Connection connection = null;
+		PreparedStatement preparedStmt = null;
+		
+		String selectSQL = "SELECT * FROM " + GestoreAssistenzaDS.TABLE_NAME 
+				+ " WHERE EMAIL = ?";
+		
+		GestoreAssistenzaBean bean = new GestoreAssistenzaBean();
+		
+		try {
+			connection = ds.getConnection();
+			preparedStmt = connection.prepareStatement(selectSQL);
+			preparedStmt.setString(1, email);
+			
+			ResultSet rs = preparedStmt.executeQuery();
+			
+			while (rs.next()) {
+				bean.setCodice_fiscale(rs.getString("codice_fiscale"));
+				bean.setNome(rs.getString("nome"));
+				bean.setCognome(rs.getString("cognome"));
+				bean.setUsername(rs.getString("username"));
+				bean.setEmail(rs.getString("email"));
+				bean.setPassword(rs.getString("pass_word"));
+				bean.setRetribuzione_annuale(rs.getInt("retribuzione_annuale"));
+			}
+		}
+		
+		finally {
+			try {
+				if (preparedStmt != null)
+					preparedStmt.close();
+			}
+			finally {
+				if (connection != null)
+					connection.close();
+			}
+		}
+		
+		return bean;
+	}
 
 	@Override
 	public Collection<GestoreAssistenzaBean> doRetrieveAll(String order) throws SQLException {

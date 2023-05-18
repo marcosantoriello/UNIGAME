@@ -15,6 +15,8 @@ public interface Amministratore {
 	
 	public AmministratoreBean doRetrieveByKey(String username) throws SQLException;
 	
+	public AmministratoreBean doRetrieveByKeyEmail(String email) throws SQLException;
+	
 	public Collection<AmministratoreBean> doRetrieveAll(String order) throws SQLException;
 	
 	//public Collection<AmministratoreBean> doRetrieveAllExists(String order) throws SQLException;

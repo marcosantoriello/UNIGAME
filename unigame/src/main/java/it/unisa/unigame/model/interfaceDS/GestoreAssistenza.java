@@ -15,5 +15,7 @@ public interface GestoreAssistenza {
 	
 	public GestoreAssistenzaBean doRetrieveByKey(String username) throws SQLException;
 	
+	public GestoreAssistenzaBean doRetrieveByKeyEmail(String email) throws SQLException;
+	
 	public Collection<GestoreAssistenzaBean> doRetrieveAll(String order) throws SQLException;
 }

@@ -17,5 +17,7 @@ public interface Cliente {
 	
 	public ClienteBean doRetrieveByKey(String username) throws SQLException;
 	
+	public ClienteBean doRetrieveByKeyEmail(String email) throws SQLException;
+	
 	public Collection<ClienteBean> doRetrieveAll(String order) throws SQLException;
 }
