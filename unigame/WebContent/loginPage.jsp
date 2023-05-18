@@ -38,7 +38,7 @@
         <div class="form-box login">
             <h2>Login</h2>
             
-            <form action="/LoginServlet">
+            <form action="LoginServlet" method="post">
                 <!-- Campi email e password -->
                 <div class="input-box">
                     <span class="icon"><ion-icon name="mail"></ion-icon></span>

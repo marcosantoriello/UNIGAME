@@ -34,7 +34,8 @@ public class LoginServlet extends HttpServlet {
     }
 
 	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
 		String redirectPage;
@@ -51,17 +52,28 @@ public class LoginServlet extends HttpServlet {
 			
 			if (ruolo.equals("cliente")) {
 				Cliente cliente = new ClienteDS(ds);
-				clienteBean = cliente.doRetrieveByKey("email");
+				clienteBean = cliente.doRetrieveByKeyEmail("email");
+				request.getSession().setAttribute("utente", clienteBean);
+				//request.getSession().setAttribute("carrello", new Carrello(ds));
 			}
 			else if (ruolo.equals("gestAssist")) {
-				
+				GestoreAssistenza gestAss = new GestoreAssistenzaDS(ds);
+				gestAssBean = gestAss.doRetrieveByKeyEmail(email);
+				request.getSession().setAttribute("utente", gestAssBean);
 			}
 			else if (ruolo.equals("admin")) {
-				
+				Amministratore admin = new AmministratoreDS(ds);
+				ammBean = admin.doRetrieveByKeyEmail(email);
+				request.getSession().setAttribute("utente", ammBean);
 			}
+			
+			request.getSession().setAttribute("ruolo", ruolo);
+			redirectPage = "/index.jsp";
+		} catch (Exception e) {
+			request.getSession().setAttribute("ruolo", null);
+			redirectPage = "/index.jsp";
 		}
-		
-		
+		response.sendRedirect(request.getContextPath() + redirectPage);
 	}
 	
 	private String getRuolo(String email, String password) throws LoginException, SQLException {
