@@ -39,12 +39,14 @@ header {
 }
 
 .navigation a {
+	
     position: relative;
     font-size: 1.1em;
     color: #fff;
     text-decoration: none; /* no decorazioni*/
     font-weight: 500;
     margin-left: 40px;
+    display: inline-block;
 }
 
 .navigation a::after {
