@@ -118,11 +118,13 @@ CREATE TABLE recensione(
 
 CREATE TABLE ordine(
     id int NOT NULL AUTO_INCREMENT,
+    cliente VARCHAR(16) NOT NULL,
     data_e_ora DATETIME NOT NULL,
     importo_totale DECIMAL(6,2) NOT NULL,
     num_carta BIGINT NOT NULL,
     num_ordini int NOT NULL,
-    PRIMARY KEY(id)
+    PRIMARY KEY(id),
+    FOREIGN KEY(cliente) REFERENCES cliente(codice_fiscale) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE fattura(
