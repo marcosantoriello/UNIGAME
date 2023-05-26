@@ -1,47 +1,45 @@
 package it.unisa.unigame.model.DAO;
 
-import java.sql.Timestamp;
+import java.sql.SQLException;
+import java.util.Collection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.LinkedList;
 
 import javax.sql.DataSource;
 
-import it.unisa.unigame.model.bean.OrdineBean;
-import it.unisa.unigame.model.interfaceDS.Ordine;
+import it.unisa.unigame.model.bean.ProdottoFisicoBean;
+import it.unisa.unigame.model.interfaceDS.ProdottoFisico;
 
-public class OrdineDS implements Ordine{
+
+public class ProdottoFisicoDS implements ProdottoFisico{
 	
-	static final String TABLE_NAME = "ordine";
+	static final String  TABLE_NAME= "prodotto_fisico";
 	
-	private DataSource ds = null;
+	private DataSource ds=null;
 	
-	public OrdineDS(DataSource ds) {
-		this.ds = ds;
+	public ProdottoFisicoDS(DataSource ds) {
+		this.ds=ds;
 	}
 
 	@Override
-	public void doSave(OrdineBean bean) throws SQLException {
-		Connection connection = null;
-		PreparedStatement preparedStmt = null;
+	public void doSave(ProdottoFisicoBean bean) throws SQLException {
 		
-		String insertSQL = "INSERT INTO" + OrdineDS.TABLE_NAME
-				+ " (ID, CLIENTE, DATA_E_ORA, IMPORTO_TOTALE, NUM_CARTA) "
-				+ "VALUES (?, ?, ?, ?, ?)";
+		Connection connection=null;
+		PreparedStatement preparedStmt=null;
+		
+		String insertSQL = "INSERT INTO "+ ProdottoFisicoDS.TABLE_NAME + "(ID,NOME, PREZZO, QUANTITà, DISPONIBILE)"+ "VALUES (?, ?, ?, ?, ?)";
 		
 		try {
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(insertSQL);
 			
 			preparedStmt.setInt(1, bean.getId());
-			preparedStmt.setString(2, bean.getCodice_fiscale());
-			preparedStmt.setTimestamp(3, Timestamp.valueOf(bean.getData_e_ora()));
-			preparedStmt.setFloat(4, bean.getImporto_totale());
-			preparedStmt.setLong(5, bean.getNum_carta());
+			preparedStmt.setString(2, bean.getNome());
+			preparedStmt.setFloat(3, bean.getPrezzo());
+			preparedStmt.setInt(4, bean.getQuantità());
+			preparedStmt.setBoolean(5, bean.isDisponibile());
 			
 			preparedStmt.executeUpdate();
 			
@@ -58,27 +56,26 @@ public class OrdineDS implements Ordine{
 					connection.close();
 			}
 		}
-		
 	}
 
 	@Override
-	public void doUpdate(OrdineBean order, String cf, int id, long carta, float importo, LocalDateTime data_e_ora) throws SQLException{
-
+	public void doUpdate(ProdottoFisicoBean pf, int id, String nome, float prezzo, int quantità, Boolean disponibile)throws SQLException {
+		
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
-		String updateSQl = "UPDATE " + OrdineDS.TABLE_NAME
-				+ "SET ID = ?, CLIENTE = ?, DATA_E_ORA = ?, IMPORTO_TOTALE = ?, CARTA= ?, WHERE ID = ?";
+		String updateSQl = "UPDATE " + ProdottoFisicoDS.TABLE_NAME
+				+ "SET ID = ?, NOME = ?, PREZZO = ?, QUANTITà = ?, DISPONIBILE= ?, WHERE ID = ?";
 		
 		try {
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(updateSQl);
 			
 			preparedStmt.setInt(1, id);
-			preparedStmt.setString(2, cf);
-			preparedStmt.setTimestamp(3, Timestamp.valueOf(data_e_ora));
-			preparedStmt.setFloat(4, importo);
-			preparedStmt.setLong(5, carta);
+			preparedStmt.setString(2, nome);
+			preparedStmt.setFloat(3, prezzo);
+			preparedStmt.setInt(4, quantità);
+			preparedStmt.setBoolean(5, disponibile);
 			
 			preparedStmt.executeUpdate();
 			
@@ -95,18 +92,18 @@ public class OrdineDS implements Ordine{
 				if (connection != null)
 					connection.close();
 			}
-		}
-		
+		}		
 	}
 
 	@Override
 	public boolean doDelete(int id) throws SQLException {
+		
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
 		int result = 0;
 		
-		String deleteSQL = "DELETE FROM " + OrdineDS.TABLE_NAME
+		String deleteSQL = "DELETE FROM " + ProdottoFisicoDS.TABLE_NAME
 				+ "WHERE ID = ?";
 		
 		try {
@@ -131,13 +128,13 @@ public class OrdineDS implements Ordine{
 	}
 
 	@Override
-	public OrdineBean doRetrieveByKey(int id) throws SQLException {
-		
+	public ProdottoFisicoBean doRetrieveByKey(int id) throws SQLException {
+
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
-		OrdineBean bean = new OrdineBean();
+		ProdottoFisicoBean bean = new ProdottoFisicoBean();
 		
-		String selectSQL = "SELECT * FROM " + OrdineDS.TABLE_NAME
+		String selectSQL = "SELECT * FROM " + ProdottoFisicoDS.TABLE_NAME
 				+ "WHERE ID =  ?";
 		
 		try {
@@ -148,14 +145,15 @@ public class OrdineDS implements Ordine{
 			ResultSet rs = preparedStmt.executeQuery();
 			while (rs.next()) {
 				bean.setId(rs.getInt("id"));
-				bean.setCodice_fiscale(rs.getString("cliente"));
-				bean.setData_e_ora(rs.getTimestamp("data_e_ora").toLocalDateTime());
-				bean.setImporto_totale(rs.getFloat("importo_totale"));
-				bean.setNum_carta(rs.getLong("num_carta"));
+				bean.setNome(rs.getString("nome"));
+				bean.setPrezzo(rs.getFloat("prezzo"));
+				bean.setQuantità(rs.getInt("quantità"));
+				bean.setDisponibilità(rs.getBoolean("disponibile"));
 			}
 		}
 		
 		finally {
+			
 			try {
 				if (preparedStmt != null)
 					preparedStmt.close();
@@ -166,18 +164,17 @@ public class OrdineDS implements Ordine{
 			}
 		}
 		return bean;
+	
 	}
-	
-	
 
 	@Override
-	public Collection<OrdineBean> doRetrieveAll(String order) throws SQLException {
+	public Collection<ProdottoFisicoBean> doRetrieveAll(String order) throws SQLException {
 		
-		Collection<OrdineBean> ordini = new LinkedList<>();
+		Collection<ProdottoFisicoBean> prodotti_fisici = new LinkedList<>();
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
-		String selectSQL = "SELECT * FROM " + OrdineDS.TABLE_NAME;
+		String selectSQL = "SELECT * FROM " + ProdottoFisicoDS.TABLE_NAME;
 		
 		if (order != null && !order.equals("")) {
 			selectSQL += " ORDER BY " + order;
@@ -189,15 +186,15 @@ public class OrdineDS implements Ordine{
 			
 			ResultSet rs = preparedStmt.executeQuery();
 			while (rs.next()) {
-				OrdineBean bean = new OrdineBean();
+				ProdottoFisicoBean bean = new ProdottoFisicoBean();
 				
 				bean.setId(rs.getInt("id"));
-				bean.setCodice_fiscale(rs.getString("cliente"));
-				bean.setData_e_ora(rs.getTimestamp("data_e_ora").toLocalDateTime());
-				bean.setImporto_totale(rs.getFloat("importo_totale"));
-				bean.setNum_carta(rs.getLong("num_carta"));
+				bean.setNome(rs.getString("nome"));
+				bean.setPrezzo(rs.getFloat("prezzo"));
+				bean.setQuantità(rs.getInt("quantità"));
+				bean.setDisponibilità(rs.getBoolean("disponibile"));
 				
-				ordini.add(bean);
+				prodotti_fisici.add(bean);
 			}
 		}
 		finally {
@@ -210,8 +207,7 @@ public class OrdineDS implements Ordine{
 					connection.close();
 			}
 		}
-		return ordini;
-		
+		return prodotti_fisici;
 	}
+	
 }
-
