@@ -16,7 +16,7 @@ import it.unisa.unigame.model.interfaceDS.Cliente;
 
 public class ClienteDS implements Cliente{
 	
-	private static final String TABLE_NAME = "cliente";
+	static final String TABLE_NAME = "cliente";
 	
 	private DataSource ds = null;
 	
@@ -30,7 +30,7 @@ public class ClienteDS implements Cliente{
 		PreparedStatement preparedStmt = null;
 		
 		String insertSQL = "INSERT INTO" + 	ClienteDS.TABLE_NAME
-				+ " (CODICE_FISCALE, NOME, COGNOME, USERNAME, EMAIL, PASS_WORD, RUOLO, IND_FATTURAZIONE, DATA_DI_NASCITA, CONTA_ORDINI_REL, SOSPESO) "
+				+ " (ID, DATA_E_ORA, IMPORTO_TOTALE, NUM_CARTA, CF_CLIENTE, PASS_WORD, RUOLO, IND_FATTURAZIONE, DATA_DI_NASCITA, CONTA_ORDINI_REL, SOSPESO) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		
 		try {
