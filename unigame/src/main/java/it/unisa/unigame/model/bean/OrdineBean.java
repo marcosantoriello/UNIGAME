@@ -50,6 +50,10 @@ public class OrdineBean implements Serializable{
 		return num_carta;
 	}
 
+	public void setNum_carta(long carta) {
+		this.num_carta=carta;
+	}
+	
 	public void setCodice_fiscale(long carta) {
 		this.num_carta = carta;
 	}
