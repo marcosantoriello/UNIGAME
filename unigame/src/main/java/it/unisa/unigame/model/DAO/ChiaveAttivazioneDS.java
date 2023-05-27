@@ -1,48 +1,47 @@
- package it.unisa.unigame.model.DAO;
+package it.unisa.unigame.model.DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.Collection;
 import java.util.LinkedList;
 
 import javax.sql.DataSource;
 
-import it.unisa.unigame.model.bean.SoftwareHouseBean;
-import it.unisa.unigame.model.interfaceDS.SoftwareHouse;
+import it.unisa.unigame.model.bean.ChiaveAttivazioneBean;
+import it.unisa.unigame.model.interfaceDS.ChiaveAttivazione;
 
-public class SoftwareHouseDS implements SoftwareHouse{
+public class ChiaveAttivazioneDS implements ChiaveAttivazione{
 	
-	private static final String TABLE_NAME = "software_house";
+	static final String TABLE_NAME= "chiave_attivazione";
 	
-	private DataSource ds = null;
+	private DataSource ds=null;
 	
-	public SoftwareHouseDS(DataSource ds) {
-		this.ds = ds;
+	public ChiaveAttivazioneDS(DataSource ds) {
+		this.ds=ds;
 	}
 
 	@Override
-	public void doSave(SoftwareHouseBean soft) throws SQLException {
-		Connection connection = null;
-		PreparedStatement preparedStmt = null;
-		String insertSQL = "INSERT INTO " + TABLE_NAME
-				+ "(NOME, LOCAZIONE, ANNO_FONDAZIONE) VALUES(?, ?, ?)";
+	public void doSave(ChiaveAttivazioneBean bean) throws SQLException {
+		Connection connection=null;
+		PreparedStatement preparedStmt=null;
+		
+		String insertSQL = "INSERT INTO "+ ChiaveAttivazioneDS.TABLE_NAME + "(CHIAVE, VIDEOGIOCO)"+ "VALUES (?, ?)";
 		
 		try {
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(insertSQL);
-			preparedStmt.setString(1, soft.getNome());
-			preparedStmt.setString(2, soft.getLocazione());
-			preparedStmt.setDate(3, java.sql.Date.valueOf(soft.getFondazione()));
+			
+			preparedStmt.setLong(1, bean.getChiave());
+			preparedStmt.setInt(2, bean.getVideogioco());
 			
 			preparedStmt.executeUpdate();
+			
 			connection.setAutoCommit(false);
 			connection.commit();
-		} finally {
+		}
+		finally {
 			try {
 				if (preparedStmt != null)
 					preparedStmt.close();
@@ -52,24 +51,22 @@ public class SoftwareHouseDS implements SoftwareHouse{
 					connection.close();
 			}
 		}
-		
 	}
 
 	@Override
-	public void doUpdate(SoftwareHouseBean soft,String nome, String locazione, LocalDate anno_fondazione) throws SQLException {
+	public void doUpdate(ChiaveAttivazioneBean recensione, long chiave, int videogame) throws SQLException {
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
-		String updateSQl = "UPDATE " + SoftwareHouseDS.TABLE_NAME
-				+ "SET NOME= ?, LOCAZIONE= ?, ANNO_FONDAZIONE= ?";
+		String updateSQl = "UPDATE " + ChiaveAttivazioneDS.TABLE_NAME
+				+ "SET CHIAVE= ?, VIDEOGIOCO= ?";
 		
 		try {
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(updateSQl);
 			
-			preparedStmt.setString(1, nome);
-			preparedStmt.setString(2, locazione);
-			preparedStmt.setTimestamp(3, Timestamp.valueOf(anno_fondazione.atTime(LocalTime.MIDNIGHT)));
+			preparedStmt.setLong(1, chiave);
+			preparedStmt.setInt(2, videogame);
 			
 			preparedStmt.executeUpdate();
 			
@@ -87,24 +84,23 @@ public class SoftwareHouseDS implements SoftwareHouse{
 					connection.close();
 			}
 		}	
-		
 	}
 
 	@Override
-	public boolean doDelete(String nome) throws SQLException {
+	public boolean doDelete(long chiave) throws SQLException {
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
 		int result = 0;
 		
-		String deleteSQL = "DELETE FROM " + SoftwareHouseDS.TABLE_NAME
-				+ "WHERE NOME = ?";
+		String deleteSQL = "DELETE FROM " + ChiaveAttivazioneDS.TABLE_NAME
+				+ "WHERE CHIAVE = ?";
 		
 		try {
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(deleteSQL);
 			
-			preparedStmt.setString(1, nome);
+			preparedStmt.setLong(1, chiave);
 			
 			result = preparedStmt.executeUpdate();
 		}
@@ -119,27 +115,27 @@ public class SoftwareHouseDS implements SoftwareHouse{
 			}
 		}
 		return (result != 0);
+	
 	}
 
 	@Override
-	public SoftwareHouseBean doRetrieveByKey(String nome) throws SQLException {
+	public ChiaveAttivazioneBean doRetrieveByKey(long chiave) throws SQLException {
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
-		SoftwareHouseBean bean = new SoftwareHouseBean();
+		ChiaveAttivazioneBean bean = new ChiaveAttivazioneBean();
 		
-		String selectSQL = "SELECT * FROM " + SoftwareHouseDS.TABLE_NAME
-				+ "WHERE NOME =  ? ";
+		String selectSQL = "SELECT * FROM " + ChiaveAttivazioneDS.TABLE_NAME
+				+ "WHERE VIDEOGIOCO =  ? AND ORDINE=?";
 		
 		try {
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(selectSQL);
-			preparedStmt.setString(1, nome);
+			preparedStmt.setLong(1,chiave);
 			
 			ResultSet rs = preparedStmt.executeQuery();
 			while (rs.next()) {
-				bean.setNome(rs.getString("nome"));
-				bean.setLocazione(rs.getString("locazione"));
-				bean.setFondazione(rs.getTimestamp("anno_fondazione").toLocalDateTime().toLocalDate());
+				bean.setChiave(rs.getLong("chiave"));
+				bean.setVideogioco(rs.getInt("videogioco"));
 			}
 		}
 		
@@ -158,12 +154,12 @@ public class SoftwareHouseDS implements SoftwareHouse{
 	}
 
 	@Override
-	public Collection<SoftwareHouseBean> doRetrieveAll(String order) throws SQLException {
-		Collection<SoftwareHouseBean> houses = new LinkedList<>();
+	public Collection<ChiaveAttivazioneBean> doRetrieveAll(String order) throws SQLException {
+		Collection<ChiaveAttivazioneBean> chiavi = new LinkedList<>();
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
-		String selectSQL = "SELECT * FROM " + SoftwareHouseDS.TABLE_NAME;
+		String selectSQL = "SELECT * FROM " + RecensioneDS.TABLE_NAME;
 		
 		if (order != null && !order.equals("")) {
 			selectSQL += " ORDER BY " + order;
@@ -175,14 +171,12 @@ public class SoftwareHouseDS implements SoftwareHouse{
 			
 			ResultSet rs = preparedStmt.executeQuery();
 			while (rs.next()) {
-				SoftwareHouseBean bean = new SoftwareHouseBean();
+				ChiaveAttivazioneBean bean = new ChiaveAttivazioneBean();
 				
-
-				bean.setNome(rs.getString("nome"));
-				bean.setLocazione(rs.getString("locazione"));
-				bean.setFondazione(rs.getTimestamp("anno_fondazione").toLocalDateTime().toLocalDate());
+				bean.setChiave(rs.getLong("chiave"));
+				bean.setVideogioco(rs.getInt("videogioco"));
 				
-				houses.add(bean);
+				chiavi.add(bean);
 			}
 		}
 		finally {
@@ -195,7 +189,7 @@ public class SoftwareHouseDS implements SoftwareHouse{
 					connection.close();
 			}
 		}
-		return houses;	
+		return chiavi;	
 	}
-
+	
 }

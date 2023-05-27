@@ -1,48 +1,49 @@
- package it.unisa.unigame.model.DAO;
+package it.unisa.unigame.model.DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.Collection;
 import java.util.LinkedList;
 
 import javax.sql.DataSource;
 
-import it.unisa.unigame.model.bean.SoftwareHouseBean;
-import it.unisa.unigame.model.interfaceDS.SoftwareHouse;
+import it.unisa.unigame.model.bean.ComprendeOPBean;
+import it.unisa.unigame.model.interfaceDS.ComprendeOP;
 
-public class SoftwareHouseDS implements SoftwareHouse{
+public class ComprendeOPDS implements ComprendeOP{
 	
-	private static final String TABLE_NAME = "software_house";
+	static final String TABLE_NAME= "comprende_op";
 	
-	private DataSource ds = null;
+	private DataSource ds=null;
 	
-	public SoftwareHouseDS(DataSource ds) {
-		this.ds = ds;
+	public ComprendeOPDS(DataSource ds) {
+		this.ds=ds;
 	}
+	
 
 	@Override
-	public void doSave(SoftwareHouseBean soft) throws SQLException {
-		Connection connection = null;
-		PreparedStatement preparedStmt = null;
-		String insertSQL = "INSERT INTO " + TABLE_NAME
-				+ "(NOME, LOCAZIONE, ANNO_FONDAZIONE) VALUES(?, ?, ?)";
+	public void doSave(ComprendeOPBean bean) throws SQLException {
+		Connection connection=null;
+		PreparedStatement preparedStmt=null;
+		
+		String insertSQL = "INSERT INTO "+ ComprendeOPDS.TABLE_NAME + "(PRODOTTO, ORDINE)"+ "VALUES (?, ?)";
 		
 		try {
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(insertSQL);
-			preparedStmt.setString(1, soft.getNome());
-			preparedStmt.setString(2, soft.getLocazione());
-			preparedStmt.setDate(3, java.sql.Date.valueOf(soft.getFondazione()));
+			
+			preparedStmt.setInt(1, bean.getProdotto());
+			preparedStmt.setInt(2, bean.getOrdine());
+
 			
 			preparedStmt.executeUpdate();
+			
 			connection.setAutoCommit(false);
 			connection.commit();
-		} finally {
+		}
+		finally {
 			try {
 				if (preparedStmt != null)
 					preparedStmt.close();
@@ -52,24 +53,22 @@ public class SoftwareHouseDS implements SoftwareHouse{
 					connection.close();
 			}
 		}
-		
 	}
 
 	@Override
-	public void doUpdate(SoftwareHouseBean soft,String nome, String locazione, LocalDate anno_fondazione) throws SQLException {
+	public void doUpdate(ComprendeOPBean comprendeOP, int id_prodotto, int id_ordine) throws SQLException {
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
-		String updateSQl = "UPDATE " + SoftwareHouseDS.TABLE_NAME
-				+ "SET NOME= ?, LOCAZIONE= ?, ANNO_FONDAZIONE= ?";
+		String updateSQl = "UPDATE " + ComprendeOPDS.TABLE_NAME
+				+ "SET PRODOTTO = ?, ORDINE = ?";
 		
 		try {
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(updateSQl);
 			
-			preparedStmt.setString(1, nome);
-			preparedStmt.setString(2, locazione);
-			preparedStmt.setTimestamp(3, Timestamp.valueOf(anno_fondazione.atTime(LocalTime.MIDNIGHT)));
+			preparedStmt.setInt(1, id_prodotto);
+			preparedStmt.setInt(2, id_ordine);
 			
 			preparedStmt.executeUpdate();
 			
@@ -91,20 +90,22 @@ public class SoftwareHouseDS implements SoftwareHouse{
 	}
 
 	@Override
-	public boolean doDelete(String nome) throws SQLException {
+	public boolean doDelete(int id_prodotto, int id_ordine) throws SQLException {
+
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
 		int result = 0;
 		
-		String deleteSQL = "DELETE FROM " + SoftwareHouseDS.TABLE_NAME
-				+ "WHERE NOME = ?";
+		String deleteSQL = "DELETE FROM " + ComprendeOPDS.TABLE_NAME
+				+ "WHERE PRODOTTO = ? AND ORDINE= ?";
 		
 		try {
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(deleteSQL);
 			
-			preparedStmt.setString(1, nome);
+			preparedStmt.setInt(1, id_prodotto);
+			preparedStmt.setInt(2, id_ordine);
 			
 			result = preparedStmt.executeUpdate();
 		}
@@ -119,27 +120,28 @@ public class SoftwareHouseDS implements SoftwareHouse{
 			}
 		}
 		return (result != 0);
+	
 	}
 
 	@Override
-	public SoftwareHouseBean doRetrieveByKey(String nome) throws SQLException {
+	public ComprendeOPBean doRetrieveByKey(int id_prodotto, int id_ordine) throws SQLException {
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
-		SoftwareHouseBean bean = new SoftwareHouseBean();
+		ComprendeOPBean bean = new ComprendeOPBean();
 		
-		String selectSQL = "SELECT * FROM " + SoftwareHouseDS.TABLE_NAME
-				+ "WHERE NOME =  ? ";
+		String selectSQL = "SELECT * FROM " + ComprendeOPDS.TABLE_NAME
+				+ "WHERE PRODOTTO =  ? AND ORDINE=?";
 		
 		try {
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(selectSQL);
-			preparedStmt.setString(1, nome);
+			preparedStmt.setInt(1, id_prodotto);
+			preparedStmt.setInt(2, id_ordine);
 			
 			ResultSet rs = preparedStmt.executeQuery();
 			while (rs.next()) {
-				bean.setNome(rs.getString("nome"));
-				bean.setLocazione(rs.getString("locazione"));
-				bean.setFondazione(rs.getTimestamp("anno_fondazione").toLocalDateTime().toLocalDate());
+				bean.setProdotto(rs.getInt("prodotto"));
+				bean.setOrdine(rs.getInt("ordine"));
 			}
 		}
 		
@@ -158,12 +160,13 @@ public class SoftwareHouseDS implements SoftwareHouse{
 	}
 
 	@Override
-	public Collection<SoftwareHouseBean> doRetrieveAll(String order) throws SQLException {
-		Collection<SoftwareHouseBean> houses = new LinkedList<>();
+	public Collection<ComprendeOPBean> doRetrieveAll(String order) throws SQLException {
+
+		Collection<ComprendeOPBean> ordine_prodottoF = new LinkedList<>();
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
-		String selectSQL = "SELECT * FROM " + SoftwareHouseDS.TABLE_NAME;
+		String selectSQL = "SELECT * FROM " + ComprendeOPDS.TABLE_NAME;
 		
 		if (order != null && !order.equals("")) {
 			selectSQL += " ORDER BY " + order;
@@ -175,14 +178,12 @@ public class SoftwareHouseDS implements SoftwareHouse{
 			
 			ResultSet rs = preparedStmt.executeQuery();
 			while (rs.next()) {
-				SoftwareHouseBean bean = new SoftwareHouseBean();
+				ComprendeOPBean bean = new ComprendeOPBean();
 				
-
-				bean.setNome(rs.getString("nome"));
-				bean.setLocazione(rs.getString("locazione"));
-				bean.setFondazione(rs.getTimestamp("anno_fondazione").toLocalDateTime().toLocalDate());
+				bean.setProdotto(rs.getInt("prodotto"));
+				bean.setOrdine(rs.getInt("ordine"));
 				
-				houses.add(bean);
+				ordine_prodottoF.add(bean);
 			}
 		}
 		finally {
@@ -195,7 +196,6 @@ public class SoftwareHouseDS implements SoftwareHouse{
 					connection.close();
 			}
 		}
-		return houses;	
-	}
-
+		return ordine_prodottoF;	
+		}
 }
