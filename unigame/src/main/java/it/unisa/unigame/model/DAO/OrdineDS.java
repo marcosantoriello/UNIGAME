@@ -40,7 +40,7 @@ public class OrdineDS implements Ordine{
 			
 			preparedStmt.setInt(1, bean.getId());
 			preparedStmt.setString(2, bean.getCodice_fiscale());
-			preparedStmt.setByte(3, bean.getData_e_ora());
+			preparedStmt.setDate(3, Date.valueOf(bean.getData_e_ora().toLocalDate()));
 			preparedStmt.setFloat(4, bean.getImporto_totale());
 			preparedStmt.setLong(5, bean.getNum_carta());
 			
@@ -77,7 +77,7 @@ public class OrdineDS implements Ordine{
 			
 			preparedStmt.setInt(1, id);
 			preparedStmt.setString(2, cf);
-			preparedStmt.setDate(3, data_e_ora);
+			preparedStmt.setDate(3, Date.valueOf(data_e_ora.toLocalDate()));
 			preparedStmt.setFloat(4, importo);
 			preparedStmt.setLong(5, carta);
 			
@@ -150,7 +150,7 @@ public class OrdineDS implements Ordine{
 			while (rs.next()) {
 				bean.setId(rs.getInt("id"));
 				bean.setCodice_fiscale(rs.getString("cliente"));
-				bean.setDate(rs.getString("data_e_ora"));
+				bean.setData_e_ora(rs.getTimestamp("data_e_ora").toLocalDateTime());
 				bean.setImporto_totale(rs.getFloat("importo_totale"));
 				bean.setNum_carta(rs.getLong("num_carta"));
 			}
@@ -194,7 +194,7 @@ public class OrdineDS implements Ordine{
 				
 				bean.setId(rs.getInt("id"));
 				bean.setCodice_fiscale(rs.getString("cliente"));
-				bean.setDate(rs.getString("data_e_ora"));
+				bean.setData_e_ora(rs.getTimestamp("data_e_ora").toLocalDateTime());
 				bean.setImporto_totale(rs.getFloat("importo_totale"));
 				bean.setNum_carta(rs.getLong("num_carta"));
 				
