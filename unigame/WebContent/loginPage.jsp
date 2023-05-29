@@ -17,7 +17,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=devide-width, initial scale=1.0">
 	<title>Accedi</title>
-	<link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="style/style.css">
+	<link rel="stylesheet" href="style/loginPage.css">
 	<link rel="icon" href="../images/icon.png">
 
 </head>
@@ -26,11 +27,11 @@
 	<header>
 		<h2 class="logo">Unigame</h2>
 		<nav class="navigation">
-			<a href="#">Home</a>
+			<a href="index.jsp">Home</a>
 			<a href="#">Shop</a>
             <a href="#">Chi Siamo</a>
 			<a href="#">Contatti</a>
-            <button class="btnLogin-popup">Login</button>
+            <button class="btnAccount-popup">Account</button>
 		</nav>
 	</header>
 

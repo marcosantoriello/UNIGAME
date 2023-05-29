@@ -144,6 +144,23 @@ CREATE TABLE fattura(
 ); */
 
 /*----------------------RELAZIONI-----------------------*/
+CREATE TABLE gestisce_pf(
+    amministratore VARCHAR(16) NOT NULL,
+    prodotto BIGINT NOT NULL,
+    data_e_ora DATETIME NOT NULL;
+    PRIMARY KEY(amministratore, prodotto),
+    FOREIGN KEY(amministratore) REFERENCES amministratore(codice_fiscale) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(prodotto) REFERENCES prodotto_fisico(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE gestisce_v(
+    amministratore VARCHAR(16) NOT NULL,
+    videogioco BIGINT NOT NULL,
+    data_e_ora DATETIME NOT NULL;
+    PRIMARY KEY(amministratore, videogioco),
+    FOREIGN KEY(amministratore) REFERENCES amministratore(codice_fiscale) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(videogioco) REFERENCES videogioco(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
 
 CREATE TABLE comprende_op(
     prodotto BIGINT NOT NULL,
