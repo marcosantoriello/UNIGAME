@@ -30,7 +30,7 @@ public class ClienteDS implements Cliente{
 		PreparedStatement preparedStmt = null;
 		
 		String insertSQL = "INSERT INTO" + 	ClienteDS.TABLE_NAME
-				+ " (ID, DATA_E_ORA, IMPORTO_TOTALE, NUM_CARTA, CF_CLIENTE, PASS_WORD, RUOLO, IND_FATTURAZIONE, DATA_DI_NASCITA, CONTA_ORDINI_REL, SOSPESO) "
+				+ " (CF_CLIENTE,NOME, COGNOME, USERNAME, EMAIL, PASS_WORD, RUOLO, IND_FATTURAZIONE, DATA_DI_NASCITA, CONTA_ORDINI_REL, SOSPESO) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		
 		try {

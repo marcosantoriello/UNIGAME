@@ -1,47 +1,42 @@
 package it.unisa.unigame.model.DAO;
 
-import java.sql.Timestamp;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedList;
 
 import javax.sql.DataSource;
 
-import it.unisa.unigame.model.bean.OrdineBean;
-import it.unisa.unigame.model.interfaceDS.Ordine;
+import it.unisa.unigame.model.bean.ComprendeOPBean;
+import it.unisa.unigame.model.interfaceDS.ComprendeOP;
 
-public class OrdineDS implements Ordine{
+public class ComprendeOPDS implements ComprendeOP{
 	
-	static final String TABLE_NAME = "ordine";
+	static final String TABLE_NAME= "comprende_op";
 	
-	private DataSource ds = null;
+	private DataSource ds=null;
 	
-	public OrdineDS(DataSource ds) {
-		this.ds = ds;
+	public ComprendeOPDS(DataSource ds) {
+		this.ds=ds;
 	}
+	
 
 	@Override
-	public void doSave(OrdineBean bean) throws SQLException {
-		Connection connection = null;
-		PreparedStatement preparedStmt = null;
+	public void doSave(ComprendeOPBean bean) throws SQLException {
+		Connection connection=null;
+		PreparedStatement preparedStmt=null;
 		
-		String insertSQL = "INSERT INTO" + OrdineDS.TABLE_NAME
-				+ " (ID, CLIENTE, DATA_E_ORA, IMPORTO_TOTALE, NUM_CARTA) "
-				+ "VALUES (?, ?, ?, ?, ?)";
+		String insertSQL = "INSERT INTO "+ ComprendeOPDS.TABLE_NAME + "(PRODOTTO, ORDINE)"+ "VALUES (?, ?)";
 		
 		try {
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(insertSQL);
 			
-			preparedStmt.setInt(1, bean.getId());
-			preparedStmt.setString(2, bean.getCodice_fiscale());
-			preparedStmt.setTimestamp(3, Timestamp.valueOf(bean.getData_e_ora()));
-			preparedStmt.setFloat(4, bean.getImporto_totale());
-			preparedStmt.setLong(5, bean.getNum_carta());
+			preparedStmt.setInt(1, bean.getProdotto());
+			preparedStmt.setInt(2, bean.getOrdine());
+
 			
 			preparedStmt.executeUpdate();
 			
@@ -58,27 +53,22 @@ public class OrdineDS implements Ordine{
 					connection.close();
 			}
 		}
-		
 	}
 
 	@Override
-	public void doUpdate(OrdineBean order, String cf, int id, long carta, float importo, LocalDateTime data_e_ora) throws SQLException{
-
+	public void doUpdate(ComprendeOPBean comprendeOP, int id_prodotto, int id_ordine) throws SQLException {
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
-		String updateSQl = "UPDATE " + OrdineDS.TABLE_NAME
-				+ "SET ID = ?, CLIENTE = ?, DATA_E_ORA = ?, IMPORTO_TOTALE = ?, CARTA= ?, WHERE ID = ?";
+		String updateSQl = "UPDATE " + ComprendeOPDS.TABLE_NAME
+				+ "SET PRODOTTO = ?, ORDINE = ?";
 		
 		try {
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(updateSQl);
 			
-			preparedStmt.setInt(1, id);
-			preparedStmt.setString(2, cf);
-			preparedStmt.setTimestamp(3, Timestamp.valueOf(data_e_ora));
-			preparedStmt.setFloat(4, importo);
-			preparedStmt.setLong(5, carta);
+			preparedStmt.setInt(1, id_prodotto);
+			preparedStmt.setInt(2, id_ordine);
 			
 			preparedStmt.executeUpdate();
 			
@@ -95,25 +85,27 @@ public class OrdineDS implements Ordine{
 				if (connection != null)
 					connection.close();
 			}
-		}
+		}	
 		
 	}
 
 	@Override
-	public boolean doDelete(int id) throws SQLException {
+	public boolean doDelete(int id_prodotto, int id_ordine) throws SQLException {
+
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
 		int result = 0;
 		
-		String deleteSQL = "DELETE FROM " + OrdineDS.TABLE_NAME
-				+ "WHERE ID = ?";
+		String deleteSQL = "DELETE FROM " + ComprendeOPDS.TABLE_NAME
+				+ "WHERE PRODOTTO = ? AND ORDINE= ?";
 		
 		try {
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(deleteSQL);
 			
-			preparedStmt.setInt(1, id);
+			preparedStmt.setInt(1, id_prodotto);
+			preparedStmt.setInt(2, id_ordine);
 			
 			result = preparedStmt.executeUpdate();
 		}
@@ -128,34 +120,33 @@ public class OrdineDS implements Ordine{
 			}
 		}
 		return (result != 0);
+	
 	}
 
 	@Override
-	public OrdineBean doRetrieveByKey(int id) throws SQLException {
-		
+	public ComprendeOPBean doRetrieveByKey(int id_prodotto, int id_ordine) throws SQLException {
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
-		OrdineBean bean = new OrdineBean();
+		ComprendeOPBean bean = new ComprendeOPBean();
 		
-		String selectSQL = "SELECT * FROM " + OrdineDS.TABLE_NAME
-				+ "WHERE ID =  ?";
+		String selectSQL = "SELECT * FROM " + ComprendeOPDS.TABLE_NAME
+				+ "WHERE PRODOTTO =  ? AND ORDINE=?";
 		
 		try {
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(selectSQL);
-			preparedStmt.setInt(1, id);
+			preparedStmt.setInt(1, id_prodotto);
+			preparedStmt.setInt(2, id_ordine);
 			
 			ResultSet rs = preparedStmt.executeQuery();
 			while (rs.next()) {
-				bean.setId(rs.getInt("id"));
-				bean.setCodice_fiscale(rs.getString("cliente"));
-				bean.setData_e_ora(rs.getTimestamp("data_e_ora").toLocalDateTime());
-				bean.setImporto_totale(rs.getFloat("importo_totale"));
-				bean.setNum_carta(rs.getLong("num_carta"));
+				bean.setProdotto(rs.getInt("prodotto"));
+				bean.setOrdine(rs.getInt("ordine"));
 			}
 		}
 		
 		finally {
+			
 			try {
 				if (preparedStmt != null)
 					preparedStmt.close();
@@ -167,17 +158,15 @@ public class OrdineDS implements Ordine{
 		}
 		return bean;
 	}
-	
-	
 
 	@Override
-	public Collection<OrdineBean> doRetrieveAll(String order) throws SQLException {
-		
-		Collection<OrdineBean> ordini = new LinkedList<>();
+	public Collection<ComprendeOPBean> doRetrieveAll(String order) throws SQLException {
+
+		Collection<ComprendeOPBean> ordine_prodottoF = new LinkedList<>();
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
-		String selectSQL = "SELECT * FROM " + OrdineDS.TABLE_NAME;
+		String selectSQL = "SELECT * FROM " + ComprendeOPDS.TABLE_NAME;
 		
 		if (order != null && !order.equals("")) {
 			selectSQL += " ORDER BY " + order;
@@ -189,15 +178,12 @@ public class OrdineDS implements Ordine{
 			
 			ResultSet rs = preparedStmt.executeQuery();
 			while (rs.next()) {
-				OrdineBean bean = new OrdineBean();
+				ComprendeOPBean bean = new ComprendeOPBean();
 				
-				bean.setId(rs.getInt("id"));
-				bean.setCodice_fiscale(rs.getString("cliente"));
-				bean.setData_e_ora(rs.getTimestamp("data_e_ora").toLocalDateTime());
-				bean.setImporto_totale(rs.getFloat("importo_totale"));
-				bean.setNum_carta(rs.getLong("num_carta"));
+				bean.setProdotto(rs.getInt("prodotto"));
+				bean.setOrdine(rs.getInt("ordine"));
 				
-				ordini.add(bean);
+				ordine_prodottoF.add(bean);
 			}
 		}
 		finally {
@@ -210,8 +196,6 @@ public class OrdineDS implements Ordine{
 					connection.close();
 			}
 		}
-		return ordini;
-		
-	}
+		return ordine_prodottoF;	
+		}
 }
-

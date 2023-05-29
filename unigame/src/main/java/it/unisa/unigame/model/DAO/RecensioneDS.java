@@ -1,47 +1,49 @@
 package it.unisa.unigame.model.DAO;
 
-import java.sql.Timestamp;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedList;
 
 import javax.sql.DataSource;
 
-import it.unisa.unigame.model.bean.OrdineBean;
-import it.unisa.unigame.model.interfaceDS.Ordine;
+import it.unisa.unigame.model.bean.RecensioneBean;
+import it.unisa.unigame.model.bean.RecensioneBean.Indice_gradimento;
+import it.unisa.unigame.model.interfaceDS.Recensione;
 
-public class OrdineDS implements Ordine{
+public class RecensioneDS implements Recensione{
 	
-	static final String TABLE_NAME = "ordine";
+	static final String TABLE_NAME= "recensione";
 	
-	private DataSource ds = null;
+	private DataSource ds=null;
 	
-	public OrdineDS(DataSource ds) {
-		this.ds = ds;
+	public RecensioneDS(DataSource ds) {
+		this.ds=ds;
 	}
+	
 
 	@Override
-	public void doSave(OrdineBean bean) throws SQLException {
-		Connection connection = null;
-		PreparedStatement preparedStmt = null;
+	public void doSave(RecensioneBean bean) throws SQLException {
+		Connection connection=null;
+		PreparedStatement preparedStmt=null;
 		
-		String insertSQL = "INSERT INTO" + OrdineDS.TABLE_NAME
-				+ " (ID, CLIENTE, DATA_E_ORA, IMPORTO_TOTALE, NUM_CARTA) "
-				+ "VALUES (?, ?, ?, ?, ?)";
+		String insertSQL = "INSERT INTO "+ RecensioneDS.TABLE_NAME + "(ID, CLIENTE, PRODOTTO, VIDEOGIOCO, DATA_E_ORA, DESCRIZIONE, INDICE_DI_GRADIMENTO)"+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
 		
 		try {
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(insertSQL);
 			
-			preparedStmt.setInt(1, bean.getId());
-			preparedStmt.setString(2, bean.getCodice_fiscale());
-			preparedStmt.setTimestamp(3, Timestamp.valueOf(bean.getData_e_ora()));
-			preparedStmt.setFloat(4, bean.getImporto_totale());
-			preparedStmt.setLong(5, bean.getNum_carta());
+			preparedStmt.setInt(1, bean.getVideogioco());
+			preparedStmt.setString(2, bean.getCliente());
+			preparedStmt.setInt(3, bean.getProdotto());
+			preparedStmt.setInt(4, bean.getVideogioco());
+			preparedStmt.setTimestamp(5, Timestamp.valueOf(bean.getData_e_ora()));
+			preparedStmt.setString(6, bean.getDescrizione());
+			preparedStmt.setString(7, bean.getIndice_di_gradimento().name());
 			
 			preparedStmt.executeUpdate();
 			
@@ -58,27 +60,27 @@ public class OrdineDS implements Ordine{
 					connection.close();
 			}
 		}
-		
 	}
 
 	@Override
-	public void doUpdate(OrdineBean order, String cf, int id, long carta, float importo, LocalDateTime data_e_ora) throws SQLException{
-
+	public void doUpdate(RecensioneBean recensione, int id, String cliente, int prodotto, int videogame, LocalDateTime data_e_ora,String descrizione, Indice_gradimento indice) throws SQLException {
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
-		String updateSQl = "UPDATE " + OrdineDS.TABLE_NAME
-				+ "SET ID = ?, CLIENTE = ?, DATA_E_ORA = ?, IMPORTO_TOTALE = ?, CARTA= ?, WHERE ID = ?";
+		String updateSQl = "UPDATE " + RecensioneDS.TABLE_NAME
+				+ "SET ID= ?, CLIENTE= ?, PRODOTTO= ?, VIDEOGIOCO= ?, DATA_E_ORA= ?, DESCRIZIONE= ?, INDICE_DI_GRADIMENTO = ?";
 		
 		try {
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(updateSQl);
 			
 			preparedStmt.setInt(1, id);
-			preparedStmt.setString(2, cf);
-			preparedStmt.setTimestamp(3, Timestamp.valueOf(data_e_ora));
-			preparedStmt.setFloat(4, importo);
-			preparedStmt.setLong(5, carta);
+			preparedStmt.setString(2, cliente);
+			preparedStmt.setInt(3, prodotto);
+			preparedStmt.setInt(4, videogame);
+			preparedStmt.setTimestamp(5, Timestamp.valueOf(data_e_ora));
+			preparedStmt.setString(6, descrizione);
+			preparedStmt.setString(7, indice.name());
 			
 			preparedStmt.executeUpdate();
 			
@@ -95,18 +97,19 @@ public class OrdineDS implements Ordine{
 				if (connection != null)
 					connection.close();
 			}
-		}
+		}	
 		
 	}
 
 	@Override
 	public boolean doDelete(int id) throws SQLException {
+
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
 		int result = 0;
 		
-		String deleteSQL = "DELETE FROM " + OrdineDS.TABLE_NAME
+		String deleteSQL = "DELETE FROM " + RecensioneDS.TABLE_NAME
 				+ "WHERE ID = ?";
 		
 		try {
@@ -128,17 +131,17 @@ public class OrdineDS implements Ordine{
 			}
 		}
 		return (result != 0);
+	
 	}
 
 	@Override
-	public OrdineBean doRetrieveByKey(int id) throws SQLException {
-		
+	public RecensioneBean doRetrieveByKey(int id) throws SQLException {
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
-		OrdineBean bean = new OrdineBean();
+		RecensioneBean bean = new RecensioneBean();
 		
-		String selectSQL = "SELECT * FROM " + OrdineDS.TABLE_NAME
-				+ "WHERE ID =  ?";
+		String selectSQL = "SELECT * FROM " + RecensioneDS.TABLE_NAME
+				+ "WHERE VIDEOGIOCO =  ? AND ORDINE=?";
 		
 		try {
 			connection = ds.getConnection();
@@ -148,14 +151,16 @@ public class OrdineDS implements Ordine{
 			ResultSet rs = preparedStmt.executeQuery();
 			while (rs.next()) {
 				bean.setId(rs.getInt("id"));
-				bean.setCodice_fiscale(rs.getString("cliente"));
+				bean.setCliente(rs.getString("cliente"));
+				bean.setProdotto(rs.getInt("prodotto"));
+				bean.setVideogioco(rs.getInt("videogioco"));
 				bean.setData_e_ora(rs.getTimestamp("data_e_ora").toLocalDateTime());
-				bean.setImporto_totale(rs.getFloat("importo_totale"));
-				bean.setNum_carta(rs.getLong("num_carta"));
-			}
+				bean.setDescrizione(rs.getString("descrizione"));
+				bean.setIndice_di_gradimento(Indice_gradimento.valueOf(rs.getString("indice_di_gradimento")));			}
 		}
 		
 		finally {
+			
 			try {
 				if (preparedStmt != null)
 					preparedStmt.close();
@@ -167,17 +172,15 @@ public class OrdineDS implements Ordine{
 		}
 		return bean;
 	}
-	
-	
 
 	@Override
-	public Collection<OrdineBean> doRetrieveAll(String order) throws SQLException {
-		
-		Collection<OrdineBean> ordini = new LinkedList<>();
+	public Collection<RecensioneBean> doRetrieveAll(String order) throws SQLException {
+
+		Collection<RecensioneBean> recensioni = new LinkedList<>();
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
-		String selectSQL = "SELECT * FROM " + OrdineDS.TABLE_NAME;
+		String selectSQL = "SELECT * FROM " + RecensioneDS.TABLE_NAME;
 		
 		if (order != null && !order.equals("")) {
 			selectSQL += " ORDER BY " + order;
@@ -189,15 +192,17 @@ public class OrdineDS implements Ordine{
 			
 			ResultSet rs = preparedStmt.executeQuery();
 			while (rs.next()) {
-				OrdineBean bean = new OrdineBean();
+				RecensioneBean bean = new RecensioneBean();
 				
 				bean.setId(rs.getInt("id"));
-				bean.setCodice_fiscale(rs.getString("cliente"));
+				bean.setCliente(rs.getString("cliente"));
+				bean.setProdotto(rs.getInt("prodotto"));
+				bean.setVideogioco(rs.getInt("videogioco"));
 				bean.setData_e_ora(rs.getTimestamp("data_e_ora").toLocalDateTime());
-				bean.setImporto_totale(rs.getFloat("importo_totale"));
-				bean.setNum_carta(rs.getLong("num_carta"));
+				bean.setDescrizione(rs.getString("descrizione"));
+				bean.setIndice_di_gradimento(Indice_gradimento.valueOf(rs.getString("indice_di_gradimento")));
 				
-				ordini.add(bean);
+				recensioni.add(bean);
 			}
 		}
 		finally {
@@ -210,8 +215,6 @@ public class OrdineDS implements Ordine{
 					connection.close();
 			}
 		}
-		return ordini;
-		
+		return recensioni;	
 	}
 }
-

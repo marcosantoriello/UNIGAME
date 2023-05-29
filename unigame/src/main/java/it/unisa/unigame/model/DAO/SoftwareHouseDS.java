@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -53,31 +56,146 @@ public class SoftwareHouseDS implements SoftwareHouse{
 	}
 
 	@Override
-	public void doUpdate(SoftwareHouseBean soft) throws SQLException {
+	public void doUpdate(SoftwareHouseBean soft,String nome, String locazione, LocalDate anno_fondazione) throws SQLException {
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
-		String updateSQL = "UPDATE " + TABLE_NAME 
-			+ "SET LOCAZIONE = ?, ANNO_FONDAZIONE = ? WHERE NOME = ?";
 		
+		String updateSQl = "UPDATE " + SoftwareHouseDS.TABLE_NAME
+				+ "SET NOME= ?, LOCAZIONE= ?, ANNO_FONDAZIONE= ?";
+		
+		try {
+			connection = ds.getConnection();
+			preparedStmt = connection.prepareStatement(updateSQl);
+			
+			preparedStmt.setString(1, nome);
+			preparedStmt.setString(2, locazione);
+			preparedStmt.setTimestamp(3, Timestamp.valueOf(anno_fondazione.atTime(LocalTime.MIDNIGHT)));
+			
+			preparedStmt.executeUpdate();
+			
+			connection.setAutoCommit(false);
+			connection.commit();
+		}
+		
+		finally {
+			try {
+				if (preparedStmt != null)
+					preparedStmt.close();
+			}
+			finally {
+				if (connection != null)
+					connection.close();
+			}
+		}	
 		
 	}
 
 	@Override
 	public boolean doDelete(String nome) throws SQLException {
+		Connection connection = null;
+		PreparedStatement preparedStmt = null;
 		
-		return false;
+		int result = 0;
+		
+		String deleteSQL = "DELETE FROM " + SoftwareHouseDS.TABLE_NAME
+				+ "WHERE NOME = ?";
+		
+		try {
+			connection = ds.getConnection();
+			preparedStmt = connection.prepareStatement(deleteSQL);
+			
+			preparedStmt.setString(1, nome);
+			
+			result = preparedStmt.executeUpdate();
+		}
+		finally {
+			try {
+				if (preparedStmt != null)
+					preparedStmt.close();
+			}
+			finally {
+				if (connection != null)
+					connection.close();
+			}
+		}
+		return (result != 0);
 	}
 
 	@Override
 	public SoftwareHouseBean doRetrieveByKey(String nome) throws SQLException {
+		Connection connection = null;
+		PreparedStatement preparedStmt = null;
+		SoftwareHouseBean bean = new SoftwareHouseBean();
 		
-		return null;
+		String selectSQL = "SELECT * FROM " + SoftwareHouseDS.TABLE_NAME
+				+ "WHERE NOME =  ? ";
+		
+		try {
+			connection = ds.getConnection();
+			preparedStmt = connection.prepareStatement(selectSQL);
+			preparedStmt.setString(1, nome);
+			
+			ResultSet rs = preparedStmt.executeQuery();
+			while (rs.next()) {
+				bean.setNome(rs.getString("nome"));
+				bean.setLocazione(rs.getString("locazione"));
+				bean.setFondazione(rs.getTimestamp("anno_fondazione").toLocalDateTime().toLocalDate());
+			}
+		}
+		
+		finally {
+			
+			try {
+				if (preparedStmt != null)
+					preparedStmt.close();
+			}
+			finally {
+				if (connection != null)
+					connection.close();
+			}
+		}
+		return bean;
 	}
 
 	@Override
 	public Collection<SoftwareHouseBean> doRetrieveAll(String order) throws SQLException {
+		Collection<SoftwareHouseBean> houses = new LinkedList<>();
+		Connection connection = null;
+		PreparedStatement preparedStmt = null;
 		
-		return null;
+		String selectSQL = "SELECT * FROM " + SoftwareHouseDS.TABLE_NAME;
+		
+		if (order != null && !order.equals("")) {
+			selectSQL += " ORDER BY " + order;
+		}
+		
+		try {
+			connection = ds.getConnection();
+			preparedStmt = connection.prepareStatement(selectSQL);
+			
+			ResultSet rs = preparedStmt.executeQuery();
+			while (rs.next()) {
+				SoftwareHouseBean bean = new SoftwareHouseBean();
+				
+
+				bean.setNome(rs.getString("nome"));
+				bean.setLocazione(rs.getString("locazione"));
+				bean.setFondazione(rs.getTimestamp("anno_fondazione").toLocalDateTime().toLocalDate());
+				
+				houses.add(bean);
+			}
+		}
+		finally {
+			try {
+				if (preparedStmt != null)
+					preparedStmt.close();
+			}
+			finally {
+				if (connection != null)
+					connection.close();
+			}
+		}
+		return houses;	
 	}
 
 }
