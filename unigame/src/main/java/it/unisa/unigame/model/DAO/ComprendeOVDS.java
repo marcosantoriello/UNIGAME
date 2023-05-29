@@ -56,7 +56,7 @@ public class ComprendeOVDS implements ComprendeOV{
 	}
 
 	@Override
-	public void doUpdate(ComprendeOVBean comprendeOP, int id_videogioco, int id_ordine) throws SQLException {
+	public void doUpdate(ComprendeOVBean bean) throws SQLException {
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
@@ -67,8 +67,8 @@ public class ComprendeOVDS implements ComprendeOV{
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(updateSQl);
 			
-			preparedStmt.setInt(1, id_videogioco);
-			preparedStmt.setInt(2, id_ordine);
+			preparedStmt.setInt(1, bean.getVideogioco());
+			preparedStmt.setInt(2, bean.getOrdine());
 			
 			preparedStmt.executeUpdate();
 			

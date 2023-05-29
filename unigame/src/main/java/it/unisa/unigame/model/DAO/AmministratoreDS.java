@@ -58,8 +58,7 @@ public class AmministratoreDS implements Amministratore {
 	}
 
 	@Override
-	public void doUpdate(AmministratoreBean amm, String cf, String nome, String cognome, String username, String email,
-			String password, int retribuzione) throws SQLException {
+	public void doUpdate(AmministratoreBean bean) throws SQLException {
 		
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
@@ -72,13 +71,13 @@ public class AmministratoreDS implements Amministratore {
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(updateSQL);
 			
-			preparedStmt.setString(1, nome);
-			preparedStmt.setString(2, cognome);
-			preparedStmt.setString(3, username);
-			preparedStmt.setString(4, email);
-			preparedStmt.setString(5, password);
-			preparedStmt.setInt(6, retribuzione);
-			preparedStmt.setString(7, cf);
+			preparedStmt.setString(1, bean.getNome());
+			preparedStmt.setString(2, bean.getCognome());
+			preparedStmt.setString(3, bean.getUsername());
+			preparedStmt.setString(4, bean.getEmail());
+			preparedStmt.setString(5, bean.getPassword());
+			preparedStmt.setInt(6, bean.getRetribuzione_annuale());
+			preparedStmt.setString(7, bean.getCodice_fiscale());
 			
 			preparedStmt.executeUpdate();
 			

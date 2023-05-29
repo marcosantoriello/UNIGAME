@@ -8,8 +8,7 @@ import it.unisa.unigame.model.bean.GestoreAssistenzaBean;
 public interface GestoreAssistenza {
 	public void doSave(GestoreAssistenzaBean gest) throws SQLException;
 	
-	public void doUpdate(GestoreAssistenzaBean gest, String cf, String nome, String cognome,
-			String username, String email, String password, int retribuzione) throws SQLException;
+	public void doUpdate(GestoreAssistenzaBean gest) throws SQLException;
 	
 	public boolean doDelete(String username) throws SQLException;
 	

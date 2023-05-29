@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -63,7 +62,7 @@ public class RecensioneDS implements Recensione{
 	}
 
 	@Override
-	public void doUpdate(RecensioneBean recensione, int id, String cliente, int prodotto, int videogame, LocalDateTime data_e_ora,String descrizione, Indice_gradimento indice) throws SQLException {
+	public void doUpdate(RecensioneBean bean) throws SQLException {
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
@@ -74,13 +73,13 @@ public class RecensioneDS implements Recensione{
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(updateSQl);
 			
-			preparedStmt.setInt(1, id);
-			preparedStmt.setString(2, cliente);
-			preparedStmt.setInt(3, prodotto);
-			preparedStmt.setInt(4, videogame);
-			preparedStmt.setTimestamp(5, Timestamp.valueOf(data_e_ora));
-			preparedStmt.setString(6, descrizione);
-			preparedStmt.setString(7, indice.name());
+			preparedStmt.setInt(1, bean.getId());
+			preparedStmt.setString(2, bean.getCliente());
+			preparedStmt.setInt(3, bean.getProdotto());
+			preparedStmt.setInt(4, bean.getVideogioco());
+			preparedStmt.setTimestamp(5, Timestamp.valueOf(bean.getData_e_ora()));
+			preparedStmt.setString(6, bean.getDescrizione());
+			preparedStmt.setString(7, bean.getIndice_di_gradimento().name());
 			
 			preparedStmt.executeUpdate();
 			

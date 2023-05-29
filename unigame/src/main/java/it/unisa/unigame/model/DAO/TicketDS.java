@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -62,8 +61,7 @@ public class TicketDS implements Ticket{
 	}
 
 	@Override
-	public void doUpdate(TicketBean ticket, int num, LocalDateTime data_e_ora, String cliente, String gestore,
-			Categoria category, String mex, Boolean risolto) throws SQLException {
+	public void doUpdate(TicketBean bean) throws SQLException {
 		
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
@@ -75,13 +73,13 @@ public class TicketDS implements Ticket{
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(updateSQl);
 			
-			preparedStmt.setInt(1, num);
-			preparedStmt.setTimestamp(2, Timestamp.valueOf(data_e_ora));
-			preparedStmt.setString(3, cliente);
-			preparedStmt.setString(4, gestore);
-			preparedStmt.setString(5, category.name());
-			preparedStmt.setString(6, mex);
-			preparedStmt.setBoolean(7, risolto);
+			preparedStmt.setInt(1, bean.getNum_ticket());
+			preparedStmt.setTimestamp(2, Timestamp.valueOf(bean.getData_e_ora()));
+			preparedStmt.setString(3, bean.getCliente());
+			preparedStmt.setString(4, bean.getGestore());
+			preparedStmt.setString(5, bean.getCategory().name());
+			preparedStmt.setString(6, bean.getMessaggio());
+			preparedStmt.setBoolean(7, bean.isRisolto());
 			
 			preparedStmt.executeUpdate();
 			

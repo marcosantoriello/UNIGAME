@@ -9,7 +9,7 @@ public interface ComprendeOV {
 
 public void doSave(ComprendeOVBean comprendeOV) throws SQLException;
 	
-	public void doUpdate(ComprendeOVBean comprendeOV, int id_videogioco, int id_ordine) throws SQLException;
+	public void doUpdate(ComprendeOVBean comprendeOV) throws SQLException;
 	
 	public boolean doDelete(int id_videogioco, int id_ordine) throws SQLException; //remove by id videogame and id order
 	

@@ -9,7 +9,7 @@ public interface ProdottoFisico {
 
 public void doSave(ProdottoFisicoBean pf) throws SQLException;
 	
-	public void doUpdate(ProdottoFisicoBean pf, int id, String nome, float prezzo, int quantità, Boolean disponbile) throws SQLException;
+	public void doUpdate(ProdottoFisicoBean pf) throws SQLException;
 	
 	public boolean doDelete(int id) throws SQLException; //remove by id
 	

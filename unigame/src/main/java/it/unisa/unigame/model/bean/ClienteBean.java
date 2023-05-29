@@ -28,8 +28,7 @@ public class ClienteBean implements Serializable {
 		this.ind_fatturazione = null;
 		this.data_di_nascita = null;
 		this.conta_ordine_rel = 0;
-		this.sospeso = false;
-		
+		this.sospeso = false;	
 	}
 
 	public String getCodice_fiscale() {
@@ -115,8 +114,6 @@ public class ClienteBean implements Serializable {
 	public String getRuolo() {
 		return ruolo;
 	}
-
-	
 
 	@Override
 	public String toString() {

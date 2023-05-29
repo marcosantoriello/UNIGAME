@@ -56,7 +56,7 @@ public class ComprendeOPDS implements ComprendeOP{
 	}
 
 	@Override
-	public void doUpdate(ComprendeOPBean comprendeOP, int id_prodotto, int id_ordine) throws SQLException {
+	public void doUpdate(ComprendeOPBean bean) throws SQLException {
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
@@ -67,8 +67,8 @@ public class ComprendeOPDS implements ComprendeOP{
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(updateSQl);
 			
-			preparedStmt.setInt(1, id_prodotto);
-			preparedStmt.setInt(2, id_ordine);
+			preparedStmt.setInt(1, bean.getProdotto());
+			preparedStmt.setInt(2, bean.getOrdine());
 			
 			preparedStmt.executeUpdate();
 			

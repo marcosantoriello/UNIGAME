@@ -56,12 +56,13 @@ private static final String TABLE_NAME = "telefono";
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		String updateSQL = "UPDATE " + TABLE_NAME + " SET CLIENTE = ? WHERE NUMERO = ?";
-		
+	
+		   //il bean del telefono è quello nuovo	
 		try {
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(updateSQL);
 			preparedStmt.setString(1, tel.getCliente_cf());
-			preparedStmt.setInt(2, tel.getNumero());
+			preparedStmt.setInt(2, tel.getNumero()); 
 			preparedStmt.executeUpdate();
 			
 			connection.setAutoCommit(false);

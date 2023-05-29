@@ -63,7 +63,7 @@ static final String  TABLE_NAME= "videogioco";
 	}
 
 	@Override
-	public void doUpdate(VideogiocoBean pf, int id, String nome, float prezzo, int quantità, Boolean disponibile,int anno_produzione, Pegi pegi, String produttore) throws SQLException {
+	public void doUpdate(VideogiocoBean bean) throws SQLException {
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
@@ -74,14 +74,14 @@ static final String  TABLE_NAME= "videogioco";
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(updateSQl);
 			
-			preparedStmt.setInt(1, id);
-			preparedStmt.setString(2, nome);
-			preparedStmt.setFloat(3, prezzo);
-			preparedStmt.setInt(4, quantità);
-			preparedStmt.setString(5, pegi.name());
-			preparedStmt.setInt(6, anno_produzione);
-			preparedStmt.setBoolean(7, disponibile);
-			preparedStmt.setString(7, produttore);
+			preparedStmt.setInt(1, bean.getId());
+			preparedStmt.setString(2, bean.getNome());
+			preparedStmt.setFloat(3, bean.getPrezzo());
+			preparedStmt.setInt(4, bean.getQuantità());
+			preparedStmt.setString(5, bean.getPegi().name());
+			preparedStmt.setInt(6, bean.getAnno_produzione());
+			preparedStmt.setBoolean(7, bean.isDisponibile());
+			preparedStmt.setString(8, bean.getProduttore());
 			
 			preparedStmt.executeUpdate();
 			

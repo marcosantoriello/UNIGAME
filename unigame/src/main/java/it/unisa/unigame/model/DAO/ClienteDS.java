@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.sql.Date;
@@ -68,28 +67,27 @@ public class ClienteDS implements Cliente{
 	}
 
 	@Override
-	public void doUpdate(ClienteBean cliente, String cf, String nome, String cognome, String username, String email,
-			String password, String indirizzo_fatturazione, LocalDate data_di_nascita, boolean sospeso) throws SQLException {
+	public void doUpdate(ClienteBean bean) throws SQLException {
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
 		String updateSQl = "UPDATE " + ClienteDS.TABLE_NAME
 				+ "SET NOME = ?, COGNOME = ?, USERNAME = ?, EMAIL = ?, PASS_WORD = ?, INDIRIZZO_FATTURAZIONE = ?," 
-				+ " DATA_DI_NASCITA = ?, SOSPESO = ? WHERE CODICE_FISCALE = ?";
+				+ " DATA_DI_NASCITA = ?, SOSPESO = ?, FATTURA= ?, WHERE CODICE_FISCALE = ?";
 		
 		try {
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(updateSQl);
 			
-			preparedStmt.setString(1, nome);
-			preparedStmt.setString(2, cognome);
-			preparedStmt.setString(3, username);
-			preparedStmt.setString(4, email);
-			preparedStmt.setString(5, password);
-			preparedStmt.setString(6, indirizzo_fatturazione);
-			preparedStmt.setDate(7, Date.valueOf(data_di_nascita));
-			preparedStmt.setBoolean(8, sospeso);
-			preparedStmt.setString(9, cf);
+			preparedStmt.setString(1, bean.getNome());
+			preparedStmt.setString(2, bean.getCognome());
+			preparedStmt.setString(3, bean.getUsername());
+			preparedStmt.setString(4, bean.getEmail());
+			preparedStmt.setString(5, bean.getPassword());
+			preparedStmt.setString(6, bean.getInd_fatturazione());
+			preparedStmt.setDate(7, Date.valueOf(bean.getData_di_nascita()));
+			preparedStmt.setBoolean(8, bean.isSospeso());
+			preparedStmt.setString(9, bean.getCodice_fiscale());
 			
 			preparedStmt.executeUpdate();
 			

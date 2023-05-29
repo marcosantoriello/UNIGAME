@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -56,7 +55,7 @@ public class SoftwareHouseDS implements SoftwareHouse{
 	}
 
 	@Override
-	public void doUpdate(SoftwareHouseBean soft,String nome, String locazione, LocalDate anno_fondazione) throws SQLException {
+	public void doUpdate(SoftwareHouseBean bean) throws SQLException {
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
@@ -67,9 +66,9 @@ public class SoftwareHouseDS implements SoftwareHouse{
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(updateSQl);
 			
-			preparedStmt.setString(1, nome);
-			preparedStmt.setString(2, locazione);
-			preparedStmt.setTimestamp(3, Timestamp.valueOf(anno_fondazione.atTime(LocalTime.MIDNIGHT)));
+			preparedStmt.setString(1, bean.getNome());
+			preparedStmt.setString(2, bean.getLocazione());
+			preparedStmt.setTimestamp(3, Timestamp.valueOf(bean.getFondazione().atTime(LocalTime.MIDNIGHT)));
 			
 			preparedStmt.executeUpdate();
 			

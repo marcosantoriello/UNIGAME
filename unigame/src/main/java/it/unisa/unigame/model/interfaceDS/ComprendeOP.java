@@ -9,7 +9,7 @@ public interface ComprendeOP {
 
 	public void doSave(ComprendeOPBean comprendeOP) throws SQLException;
 	
-	public void doUpdate(ComprendeOPBean comprendeOP, int id_prodotto, int id_ordine) throws SQLException;
+	public void doUpdate(ComprendeOPBean comprendeOP) throws SQLException;
 	
 	public boolean doDelete(int id_prodotto, int id_ordine) throws SQLException; //remove by id product and id order
 	

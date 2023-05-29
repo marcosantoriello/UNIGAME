@@ -13,6 +13,7 @@ public class OrdineBean implements Serializable{
 	private long num_carta;
 	private float importo_totale;
 	private String cf_cliente;
+	private boolean fattura;
 	
 	public OrdineBean() {
 		this.id=0;
@@ -20,6 +21,7 @@ public class OrdineBean implements Serializable{
 		this.num_carta=0;
 		this.importo_totale=0;
 		this.cf_cliente=null;
+		this.fattura=false;	
 	}
 	
 	public String getCodice_fiscale() {
@@ -66,24 +68,32 @@ public class OrdineBean implements Serializable{
 		this.importo_totale = importo;
 	}
 
+	public boolean isFattura() {
+		return fattura;
+	}
+
+	public void setFattura(boolean fattura) {
+		this.fattura = fattura;
+	}
+
 	@Override
 	public String toString() {
 		return "OrdineBean [id=" + id + ", data_e_ora=" + data_e_ora + ", num_carta=" + num_carta + ", importo_totale="
-				+ importo_totale + ", cf_cliente=" + cf_cliente + "]";
+				+ importo_totale + ", cf_cliente=" + cf_cliente + ", fattura=" + fattura + "]";
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (!(obj instanceof OrdineBean)) {
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		}
 		OrdineBean other = (OrdineBean) obj;
 		return Objects.equals(cf_cliente, other.cf_cliente) && Objects.equals(data_e_ora, other.data_e_ora)
-				&& id == other.id && Float.floatToIntBits(importo_totale) == Float.floatToIntBits(other.importo_totale)
+				&& fattura == other.fattura && id == other.id
+				&& Float.floatToIntBits(importo_totale) == Float.floatToIntBits(other.importo_totale)
 				&& num_carta == other.num_carta;
-	}
-	
+	}	
 }

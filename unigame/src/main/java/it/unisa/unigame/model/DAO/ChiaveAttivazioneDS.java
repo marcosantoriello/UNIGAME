@@ -54,7 +54,7 @@ public class ChiaveAttivazioneDS implements ChiaveAttivazione{
 	}
 
 	@Override
-	public void doUpdate(ChiaveAttivazioneBean recensione, long chiave, int videogame) throws SQLException {
+	public void doUpdate(ChiaveAttivazioneBean bean) throws SQLException {
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		
@@ -65,8 +65,8 @@ public class ChiaveAttivazioneDS implements ChiaveAttivazione{
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(updateSQl);
 			
-			preparedStmt.setLong(1, chiave);
-			preparedStmt.setInt(2, videogame);
+			preparedStmt.setLong(1, bean.getChiave());
+			preparedStmt.setInt(2, bean.getVideogioco());
 			
 			preparedStmt.executeUpdate();
 			

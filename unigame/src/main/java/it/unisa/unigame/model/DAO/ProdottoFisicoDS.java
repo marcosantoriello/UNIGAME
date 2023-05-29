@@ -59,7 +59,7 @@ public class ProdottoFisicoDS implements ProdottoFisico{
 	}
 
 	@Override
-	public void doUpdate(ProdottoFisicoBean pf, int id, String nome, float prezzo, int quantità, Boolean disponibile)throws SQLException {
+	public void doUpdate(ProdottoFisicoBean bean)throws SQLException {
 		
 		Connection connection = null;
 		PreparedStatement preparedStmt = null;
@@ -71,11 +71,11 @@ public class ProdottoFisicoDS implements ProdottoFisico{
 			connection = ds.getConnection();
 			preparedStmt = connection.prepareStatement(updateSQl);
 			
-			preparedStmt.setInt(1, id);
-			preparedStmt.setString(2, nome);
-			preparedStmt.setFloat(3, prezzo);
-			preparedStmt.setInt(4, quantità);
-			preparedStmt.setBoolean(5, disponibile);
+			preparedStmt.setInt(1, bean.getId());
+			preparedStmt.setString(2, bean.getNome());
+			preparedStmt.setFloat(3, bean.getPrezzo());
+			preparedStmt.setInt(4, bean.getQuantità());
+			preparedStmt.setBoolean(5, bean.isDisponibile());
 			
 			preparedStmt.executeUpdate();
 			

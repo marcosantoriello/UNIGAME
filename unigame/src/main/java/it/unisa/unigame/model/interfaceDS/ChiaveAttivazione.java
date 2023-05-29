@@ -10,7 +10,7 @@ public interface ChiaveAttivazione {
 
 	public void doSave(ChiaveAttivazioneBean chiave_attivazione) throws SQLException;
 	
-	public void doUpdate(ChiaveAttivazioneBean recensione, long chiave ,int videogame) throws SQLException;
+	public void doUpdate(ChiaveAttivazioneBean recensione) throws SQLException;
 		
 	public boolean doDelete(long chiave) throws SQLException; //remove by id
 		
